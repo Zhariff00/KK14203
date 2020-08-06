@@ -1,0 +1,38 @@
+package clinicappointmentsystem;
+
+public class Addpatient extends mainInformation {
+	
+	
+public static void setArray(int location,String[] name,String fname,String[] name1,String lname,int[] age,int age1,long[] hpnum,long hpnum1,String[] city,String city1,String[] district,String district1,int[] days,int day1,int[] months,int month1,int[]years,int year1) {
+		
+		for(int counter = no;counter >location;counter--) {
+			fnames[counter]=fnames[counter - 1];
+			lnames[counter]=lnames[counter - 1];
+			ages[counter]=ages[counter - 1];
+			hpnums[counter]=hpnums[counter - 1];
+			citys[counter]=citys[counter - 1];
+			districts[counter]=districts[counter - 1];
+			day[counter]=day[counter - 1];
+			month[counter]=month[counter - 1];
+			year[counter]=year[counter - 1];
+		}
+		fnames[location]=fname;
+		lnames[location]=lname;
+		ages[location]=age1;
+		hpnums[location]=hpnum1;
+		citys[location]=city1;
+		districts[location]=district1;
+		day[location]=day1;
+		month[location]=month1;
+		year[location]=year1;
+	}
+	public static void getArray(String[] name,String[] name1,int[] age,long[] hpnum,String[] city,String[] district) {
+		System.out.printf("%-16s %12s %20s %20s %20s %20s%n","Name","Age ","Hpnum ","City ","District ","Appointment Date");
+		for(int counter = 0 ;counter<=no;counter++) {
+			System.out.printf("%-16s %11s %20s %20s %20s %20s%n",(counter+1)+"."+" "+name[counter].toUpperCase()+ " " +lnames[counter].toUpperCase(),age[counter],"0"+hpnum[counter],city[counter].toUpperCase(),district[counter].toUpperCase(),day[counter]+"/"+month[counter]+"/"+year[counter]);
+		}
+	}
+	
+}
+
+
