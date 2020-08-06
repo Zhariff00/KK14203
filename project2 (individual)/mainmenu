@@ -1,0 +1,47 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.event.*;
+
+public class mainmenu extends JFrame implements ActionListener {
+    private JButton jcomp1;
+    private JButton jcomp2;
+    public mainmenu() {
+        //construct components
+        jcomp1 = new JButton ("read");
+        jcomp2 = new JButton ("apply");
+
+        //adjust size and set layout
+        setPreferredSize (new Dimension (534, 204));
+        setLayout (null);
+
+        //add components
+        add (jcomp1);
+        add (jcomp2);
+
+        //set component bounds (only needed by Absolute Positioning)
+        jcomp1.setBounds (130, 70, 100, 20);
+        jcomp2.setBounds (290, 70, 140, 20);
+        jcomp1.addActionListener(this);
+        jcomp2.addActionListener(this);
+        setVisible(true);
+        setSize(500,400);
+    }
+      public void actionPerformed (ActionEvent e){
+        
+        if (e.getSource()==jcomp2){
+             
+            dispose();
+            
+            new MyPanelApply();            
+        }
+        else if (e.getSource()==jcomp1){
+        new read();
+        }
+
+    }
+    public static void main (String[] args) {
+        mainmenu mn = new mainmenu();
+        
+    }
+}
