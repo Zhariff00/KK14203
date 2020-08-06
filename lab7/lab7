@@ -1,0 +1,293 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.BorderFactory;
+import javax.swing.border.Border;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.BufferedWriter;
+import java.io.BufferedReader;
+import java.io.IOException;
+
+class HeaderPanel extends JPanel{
+   private JLabel header;
+   public HeaderPanel(){
+      	header = new JLabel("Course Evaluation Form");
+      	add(header);
+   }
+}
+
+class FormPanel extends JPanel implements ActionListener, ItemListener{
+   JLabel nameLbl;
+   JTextField name;
+   JLabel matricLbl;
+   JTextField matric;
+   JLabel codeLbl;
+   JComboBox<String> code;
+   JLabel ratingLbl;
+   JLabel outcomeLbl;
+   JButton submitR;
+   JButton clearB;
+   JCheckBox check_1;
+   JCheckBox check_2;
+   JLabel outputLbl; 
+   JScrollPane Jsp;
+   Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
+   
+   String output="";
+   String selectionCode="";
+   String selectionRb="";
+   String selectionCb="";
+   String filePath="evaluationform.txt"; 
+      
+   public FormPanel(){   
+      setLayout(new FlowLayout(FlowLayout.LEFT));     
+      
+      nameLbl = new JLabel("Name");
+      nameLbl.setPreferredSize(new Dimension(150, 20));
+      nameLbl.setBorder(border);
+      
+      add(nameLbl);
+      name = new JTextField(20);
+      add(name);
+      
+      name.addKeyListener(new KeyAdapter() {
+         public void keyTyped(KeyEvent e) {
+         char c=e.getKeyChar(); 
+            if(Character.isAlphabetic(c) || (c==KeyEvent.VK_BACK_SPACE) || (c==KeyEvent.VK_DELETE) || (c==KeyEvent.VK_SPACE)) {
+                e = e;
+            }
+           else{
+                e.consume();
+            }
+        }
+});
+     
+      matricLbl = new JLabel("Matric No.");
+      matricLbl.setPreferredSize(new Dimension(150, 20));
+      matricLbl.setBorder(border);
+      add(matricLbl);
+      matric = new JTextField(15);
+      add(matric);   
+      
+      String[] courses={"[Select]", "KK14203 OOP", "KT14203 CAO", "KT14403 Discrete Structure"};
+      
+      codeLbl = new JLabel("Course Code");
+      codeLbl.setPreferredSize(new Dimension(150, 20));
+      codeLbl.setBorder(border);
+      add(codeLbl);
+      code = new JComboBox<String>(courses);
+      add(code); 
+      
+      code.addActionListener(new ActionListener(){
+         public void actionPerformed(ActionEvent ae){
+            selectionCode = (String) code.getSelectedItem();
+         }
+      });  
+      
+      ratingLbl = new JLabel("Rating");
+      ratingLbl.setPreferredSize(new Dimension(150, 20));
+      ratingLbl.setBorder(border);
+      add(ratingLbl);
+      
+      JRadioButton rb1 = new JRadioButton("1");
+      rb1.addActionListener(this);
+      JRadioButton rb2 = new JRadioButton("2");
+      rb2.addActionListener(this);
+      JRadioButton rb3 = new JRadioButton("3");
+      rb3.addActionListener(this);
+      JRadioButton rb4 = new JRadioButton("4");
+      rb4.addActionListener(this);
+      JRadioButton rb5 = new JRadioButton("5");
+      rb5.addActionListener(this);
+      add(rb1);
+      add(rb2);
+      add(rb3);
+      add(rb4);
+      add(rb5);
+      
+      ButtonGroup bg = new ButtonGroup();
+      bg.add(rb1);
+      bg.add(rb2);
+      bg.add(rb3);
+      bg.add(rb4);
+      bg.add(rb5);
+      
+      outcomeLbl = new JLabel("Outcome");
+      outcomeLbl.setPreferredSize(new Dimension(150, 20));
+      outcomeLbl.setBorder(border);
+      add(outcomeLbl);
+      
+      check_1 = new JCheckBox("Basic knowledge");
+      check_1.addItemListener(this);
+      check_2 = new JCheckBox("Advanced knowledge");
+      check_2.addItemListener(this);
+      add(check_1);
+      add(check_2);
+      
+      submitR = new JButton("Submit");
+      add(submitR);
+      clearB = new JButton("Clear");
+      add(clearB);
+      
+      submitR.addActionListener(new ActionListener(){           
+         public void actionPerformed(ActionEvent e){  
+            if(printOutput()){
+               writeInput();  
+               
+               JOptionPane.showMessageDialog(null, "You have successfully save the data");
+            }   
+         }  
+      });
+      
+      clearB.addActionListener(new ActionListener(){  
+         public void actionPerformed(ActionEvent e){  
+            outputLbl.setText("Output");  
+            name.setText("");
+            matric.setText(""); 
+            code.setSelectedIndex(0);
+            bg.clearSelection();
+            check_1.setSelected(false);
+            check_2.setSelected(false);
+         }  
+      });
+      
+      outputLbl = new JLabel("Output");
+      outputLbl.setBorder(border);
+      outputLbl.setVerticalAlignment(JLabel.TOP);
+      
+      Jsp = new JScrollPane(outputLbl);
+      Jsp.setPreferredSize(new Dimension(410,120));
+      add(Jsp);     
+   }
+
+   public void actionPerformed(ActionEvent ae) {
+      selectionRb = ae.getActionCommand();    	   
+   }
+   
+   public void itemStateChanged(ItemEvent ie) {
+      JCheckBox check = (JCheckBox)ie.getSource();
+      selectionCb += check.getText() + " ";   
+   }
+   
+   public boolean printOutput(){
+            
+      if(selectionCode.equals("[Select]") || code.getSelectedItem().equals("")  || name.getText().equals("") || matric.getText().equals("") || selectionRb.equals("") || selectionCb.equals("")){
+         JOptionPane.showMessageDialog(null, "You haven't filled everything.");
+         return false;
+      }
+      output = "<html>";
+      output += "Thank you for your evaluation<br><br>"; 
+      output += "Name: " + name.getText() + "<br>";
+      output += "Matric: " + matric.getText() + "<br>";
+
+      output += "Course: " + selectionCode + "<br>";
+      output += "Rating: " + selectionRb + "<br>";
+      output += "Outcome: " + selectionCb + "<br>";
+      output += "</html>";          
+      outputLbl.setText(output);
+      Jsp.getViewport().revalidate();
+      return true;
+    }
+    
+    public void writeInput(){
+      File file = new File(filePath);
+		FileWriter fr = null;
+		BufferedWriter br = null;
+		PrintWriter pr = null;
+      
+      String input = name.getText() + ", " + matric.getText() + ", " + selectionCode + ", " + selectionRb + ", " + selectionCb;
+      
+		try {
+			fr = new FileWriter(file, true);
+			br = new BufferedWriter(fr);
+			pr = new PrintWriter(br);
+			pr.println(input);
+		} catch (IOException e) {			
+         outputLbl.setText(e.toString());
+		} finally {
+			try {
+				pr.close();
+				br.close();
+				fr.close();
+			} catch (IOException e) {
+				outputLbl.setText(e.toString());
+			}
+		}
+    }
+}
+
+class MenuActionListener implements ActionListener {
+   FormPanel fp;
+   public MenuActionListener(FormPanel p){
+      fp = p;
+}
+    
+   public void actionPerformed(ActionEvent e) {      
+      BufferedReader reader;
+	   try {
+			reader = new BufferedReader(new FileReader(fp.filePath));
+			String line = reader.readLine();
+         String output="<html>";
+			while (line != null) {
+				output += line + "<br>";
+				line = reader.readLine();
+			}
+         output += "<br>";
+         fp.outputLbl.setText(output);
+			reader.close();
+		} catch (IOException io) {
+			fp.outputLbl.setText(io.toString());
+		}
+  }
+}
+
+class MenuActionListener2 implements ActionListener {
+   FormPanel fp;
+   public MenuActionListener2(FormPanel p){
+      fp = p;
+}
+    
+   public void actionPerformed(ActionEvent e) {   
+      
+      int response = JOptionPane.showConfirmDialog(null,"Do you want to Exit? ", 
+     "Confirm",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
+
+     if (response == JOptionPane.YES_OPTION)
+     {
+        System.exit(0);
+     } 
+  }
+}
+
+public class lab7 {  
+   public static void main(String[] 	args) {  
+      JFrame f = new JFrame("Evaluation");
+      f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+      HeaderPanel h = new 	HeaderPanel();
+      FormPanel fp = new FormPanel();
+      
+      JMenuBar mb = new JMenuBar(); 
+      JMenu x = new JMenu("Menu"); 
+      
+      JMenuItem m1 = new JMenuItem("Load Data"); 
+      m1.addActionListener(new MenuActionListener(fp));
+      
+      JMenuItem m2 = new JMenuItem("Exit");
+      m2.addActionListener(new MenuActionListener2(fp));
+ 
+      x.add(m1); 
+      x.add(m2);
+     
+      mb.add(x); 
+      f.setJMenuBar(mb);  
+               
+      f.add(h,BorderLayout.NORTH);
+      f.add(fp, BorderLayout.CENTER);
+      f.setSize(460,400);
+      f.setVisible(true);
+   }  
+}
